@@ -3,6 +3,9 @@ pipeline {
     options {
         disableConcurrentBuilds()
     }
+    environment {
+        DJANGO_SETTINGS_MODULE = 'store.settings'
+        PYTHONUNBUFFERED = '1'
     }
     stages {
         stage('Checkout') {
