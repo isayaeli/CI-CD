@@ -88,7 +88,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    source venv/bin/activate
+                    . venv/bin/activate
                     python manage.py test --noinput
                     '''
                 }
