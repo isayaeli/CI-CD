@@ -20,7 +20,6 @@ pipeline {
                     agent {
                         dockerContainer {
                             image 'python:3.10-slim'
-                            reuseNode true
                         }
                     }
                     steps {
@@ -33,7 +32,6 @@ pipeline {
                     agent {
                         dockerContainer {
                             image 'python:3.11-slim'
-                            reuseNode true
                         }
                     }
                     steps {
