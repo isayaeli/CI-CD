@@ -121,30 +121,45 @@ pipeline {
                 }
             }
         }
-        
-        stage('Deploy to Kubernetes') {
+
+        stage('Deploy') {
             steps {
                 script {
                     
-                    // Create namespace if it doesn't exist
-                    sh """
-                    kubectl create namespace ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - --validate=false
-                    """
-                    
-                    // Deploy or update the application
-                    sh """
-                    # Apply all Kubernetes manifests
-                    kubectl apply -f k8s/ -n ${K8S_NAMESPACE} --validate=false
-                    
-                    # Update the deployment with new image
-                    kubectl set image deployment/${APP_NAME} ${APP_NAME}=${DOCKER_IMAGE} -n ${K8S_NAMESPACE} --record --validate=false
-                    
-                    # Wait for rollout to complete
-                    kubectl rollout status deployment/${APP_NAME} -n ${K8S_NAMESPACE} --timeout=120s
-                    """
-                }
+                        sh '''
+                            kubectl -- apply -f k8s/deployment.yaml
+                            kubectl -- rollout status k8s/deployment/$APP_NAME --timeout=300s
+                            kubectl -- get pods
+                        '''
+                   
+                }  
             }
+        
         }
+        
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         script {
+                    
+        //             // Create namespace if it doesn't exist
+        //             sh """
+        //             kubectl create namespace ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - --validate=false
+        //             """
+                    
+        //             // Deploy or update the application
+        //             sh """
+        //             # Apply all Kubernetes manifests
+        //             kubectl apply -f k8s/ -n ${K8S_NAMESPACE} --validate=false
+                    
+        //             # Update the deployment with new image
+        //             kubectl set image deployment/${APP_NAME} ${APP_NAME}=${DOCKER_IMAGE} -n ${K8S_NAMESPACE} --record --validate=false
+                    
+        //             # Wait for rollout to complete
+        //             kubectl rollout status deployment/${APP_NAME} -n ${K8S_NAMESPACE} --timeout=120s
+        //             """
+        //         }
+        //     }
+        // }
         
         stage('Run Migrations') {
             steps {
