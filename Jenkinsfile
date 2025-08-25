@@ -166,7 +166,7 @@ pipeline {
                 script {
                     // Run database migrations
                     sh """
-                    kubectl exec deployment/${APP_NAME} -n ${K8S_NAMESPACE} -- \
+                    kubectl exec k8s/deployment/${APP_NAME} -n ${K8S_NAMESPACE} -- \
                     python manage.py migrate --noinput
                     """
                 }
