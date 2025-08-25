@@ -18,7 +18,7 @@ pipeline {
             parallel {
                 stage('Python 3.10') {
                     agent {
-                        dockerContainer {
+                        docker {
                             image 'python:3.10-slim'
                         }
                     }
@@ -30,7 +30,7 @@ pipeline {
                 }
                 stage('Python 3.11') {
                     agent {
-                        dockerContainer {
+                        docker {
                             image 'python:3.11-slim'
                         }
                     }
