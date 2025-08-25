@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+     agent {
+        docker {
+            image 'python:3.11-slim'
+            args '-v /var/run/docker.sock:/var/run/docker.sock' // For Docker-in-Docker
+        }
+    }
     
     environment {
         APP_NAME = "django-app"
@@ -18,6 +23,9 @@ pipeline {
         stage('Setup Minikube Environment') {
             steps {
                 script {
+                    
+                    // Install additional dependencies if needed
+                    sh 'apt update && apt install -y docker.io kubectl'
                     // Point Docker to Minikube's Docker daemon
                     sh 'eval $(minikube docker-env)'
                     
@@ -31,7 +39,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                    python -m venv venv
+                    python3 -m venv venv
                     source venv/bin/activate
                     pip install -r requirements.txt
                     '''

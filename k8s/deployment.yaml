@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-app
+  template:
+    metadata:
+      labels:
+        app: django-app
+    spec:
+      containers:
+      - name: django-app
+        image: django-app:latest  # Will be updated by Jenkins
+        imagePullPolicy: IfNotPresent  # Use local images
+        ports:
+        - containerPort: 8000
+        env:
+        - name: DEBUG
+          value: "True"
+        - name: ALLOWED_HOSTS
+          value: "*"
+        - name: DATABASE_URL
+          value: "sqlite:///db.sqlite3"  # For local development
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-app-service
+spec:
+  selector:
+    app: django-app
+  ports:
+  - port: 8000
+    targetPort: 8000
+  type: NodePort
