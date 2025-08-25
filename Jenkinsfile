@@ -15,6 +15,39 @@ pipeline {
             }
         }
 
+        stage('Setup Minikube Environment') {
+            steps {
+                script {
+                    // Install required tools
+                    sh '''
+                    # Update package list
+                    apt update -y
+                    
+                    # Install Docker
+                    apt install -y docker.io
+                    
+                    # Install kubectl
+                    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+                    
+                    # Install minikube if not already installed
+                    if ! command -v minikube &> /dev/null; then
+                        curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+                        install minikube-linux-amd64 /usr/local/bin/minikube
+                    fi
+                    
+                    # Point Docker to Minikube's Docker daemon
+                    eval $(minikube docker-env)
+                    
+                    # Verify installations
+                    docker --version
+                    kubectl version --client
+                    minikube version
+                    '''
+                }
+            }
+        }
+
 
         stage('Install Python') {
             steps {
@@ -38,20 +71,6 @@ pipeline {
         }
 
  
-        stage('Setup Minikube Environment') {
-            steps {
-                script {
-                    
-                    // Install additional dependencies if needed
-                    sh 'apt update && apt install -y docker.io kubectl'
-                    // Point Docker to Minikube's Docker daemon
-                    sh 'eval $(minikube docker-env)'
-                    
-                    // Verify Minikube status
-                    sh 'minikube status'
-                }
-            }
-        }
         
         stage('Install Dependencies') {
             steps {
