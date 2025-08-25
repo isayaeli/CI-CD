@@ -18,7 +18,7 @@ pipeline {
             parallel {
                 stage('Python 3.10') {
                     agent {
-                        docker {
+                        dockerContainer {
                             image 'python:3.10-slim'
                             reuseNode true
                         }
@@ -31,7 +31,7 @@ pipeline {
                 }
                 stage('Python 3.11') {
                     agent {
-                        docker {
+                        dockerContainer {
                             image 'python:3.11-slim'
                             reuseNode true
                         }
