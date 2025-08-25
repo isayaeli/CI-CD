@@ -1,10 +1,5 @@
 pipeline {
-     agent {
-        docker {
-            image 'python:3.11-slim'
-            args '-v /var/run/docker.sock:/var/run/docker.sock' // For Docker-in-Docker
-        }
-    }
+     agent : any
     
     environment {
         APP_NAME = "django-app"
@@ -19,7 +14,30 @@ pipeline {
                 url: 'https://github.com/isayaeli/CI-CD.git'
             }
         }
-        
+
+
+        stage('Install Python') {
+            steps {
+                script {
+                    sh '''
+                    # Install Python3 if not available
+                    if ! command -v python3 &> /dev/null; then
+                        echo "Installing Python3..."
+                        apt update && apt install -y python3 python3-pip python3-venv
+                    fi
+                    
+                    # Create symlink if python doesn't exist
+                    if ! command -v python &> /dev/null; then
+                        ln -s $(which python3) /usr/bin/python
+                    fi
+                    
+                    python --version
+                    '''
+                }
+            }
+        }
+
+ 
         stage('Setup Minikube Environment') {
             steps {
                 script {
