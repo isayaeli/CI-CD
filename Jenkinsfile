@@ -49,19 +49,19 @@ pipeline {
         }
 
 
-        stage('Start Minikube') {
-            steps {
-                script {
-                    sh '''
-                    # Start Minikube if not running
-                    minikube status || minikube start --driver=docker
+        // stage('Start Minikube') {
+        //     steps {
+        //         script {
+        //             sh '''
+        //             # Start Minikube if not running
+        //             minikube status || minikube start --driver=docker
                     
-                    # Point Docker to Minikube
-                    eval $(minikube docker-env)
-                    '''
-                }
-            }
-        }
+        //             # Point Docker to Minikube
+        //             eval $(minikube docker-env)
+        //             '''
+        //         }
+        //     }
+        // }
 
 
         // stage('Install Python') {
