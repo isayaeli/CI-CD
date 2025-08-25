@@ -49,6 +49,21 @@ pipeline {
         }
 
 
+        stage('Start Minikube') {
+            steps {
+                script {
+                    sh '''
+                    # Start Minikube if not running
+                    minikube status || minikube start --driver=docker
+                    
+                    # Point Docker to Minikube
+                    eval $(minikube docker-env)
+                    '''
+                }
+            }
+        }
+
+
         // stage('Install Python') {
         //     steps {
         //         script {
@@ -113,13 +128,6 @@ pipeline {
                     
                     // Create namespace if it doesn't exist
                     sh """
-
-                    # Force use of minikube context
-                    kubectl config use-context minikube
-                    
-                    # Verify we're using the right context
-                    kubectl config current-context
-
                     kubectl create namespace ${K8S_NAMESPACE} --dry-run=client -o yaml | kubectl apply -f - --validate=false
                     """
                     
